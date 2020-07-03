@@ -56,6 +56,9 @@ def GetNCBIData(genes):
     genes.remove(remove[i])
 
   data = {}
+  content = ["GBSeq_references", "GBSeq_strandedness", "GBSeq_locus", "GBSeq_length", "GBSeq_moltype", "GBSeq_topology",
+          "GBSeq_division", "GBSeq_definition", "GBSeq_accession-version"]
+
   for i in range(len(genes)):
       handle = Entrez.efetch(db = "nucleotide", id = results[genes[i]][0], retmode = "xml")
       records1 = Entrez.read(handle)
@@ -63,19 +66,14 @@ def GetNCBIData(genes):
       records2 = Entrez.read(handle)
       handle = Entrez.efetch(db = "nucleotide", id = results[genes[i]][2], retmode = "xml")
       records3 = Entrez.read(handle)
-      if ("GBSeq_references" in records1[0].keys() and "GBSeq_references" in records2[0].keys() and "GBSeq_references" in records3[0].keys() and
-      "GBSeq_strandedness" in records1[0].keys() and "GBSeq_strandedness" in records2[0].keys() and "GBSeq_strandedness" in records3[0].keys() and
-      "GBSeq_locus" in records1[0].keys() and "GBSeq_locus" in records2[0].keys() and "GBSeq_locus" in records3[0].keys() and
-      "GBSeq_length"in records1[0].keys() and "GBSeq_length" in records2[0].keys() and "GBSeq_length" in records3[0].keys() and
-      "GBSeq_moltype" in records1[0].keys() and "GBSeq_moltype" in records2[0].keys() and"GBSeq_moltype" in records3[0].keys() and
-      "GBSeq_topology" in records1[0].keys() and "GBSeq_topology" in records2[0].keys() and "GBSeq_topology" in records3[0].keys() and
-      "GBSeq_division" in records1[0].keys() and "GBSeq_division" in records2[0].keys() and "GBSeq_division" in records3[0].keys() and
-      "GBSeq_definition" in records1[0].keys() and "GBSeq_definition" in records2[0].keys() and "GBSeq_definition" in records3[0].keys() and
-      "GBSeq_accession-version" in records1[0].keys() and "GBSeq_accession-version" in records2[0].keys() and "GBSeq_accession-version" in records3[0].keys() and
-      "GBSeq_definition" in records1[0].keys() and "GBSeq_definition" in records2[0].keys() and "GBSeq_definition" in records3[0].keys()):
-        data[genes[i]] = "Primeiro Resultado:", results[genes[i]][0], records1[0]["GBSeq_locus"], records1[0]["GBSeq_length"], records1[0]["GBSeq_strandedness"], records1[0]["GBSeq_moltype"], records1[0]["GBSeq_topology"], records1[0]["GBSeq_division"], records1[0]["GBSeq_definition"], records1[0]["GBSeq_accession-version"], records1[0]["GBSeq_source"], records1[0]["GBSeq_references"],\
-        "Segundo Resultado:", results[genes[i]][1], records2[0]["GBSeq_locus"], records2[0]["GBSeq_length"], records2[0]["GBSeq_strandedness"], records2[0]["GBSeq_moltype"], records2[0]["GBSeq_topology"], records2[0]["GBSeq_division"], records2[0]["GBSeq_definition"], records2[0]["GBSeq_accession-version"], records2[0]["GBSeq_source"], records2[0]["GBSeq_references"],\
-        "Terceiro Resultado:", results[genes[i]][2], records3[0]["GBSeq_locus"], records3[0]["GBSeq_length"], records3[0]["GBSeq_strandedness"], records3[0]["GBSeq_moltype"], records3[0]["GBSeq_topology"], records3[0]["GBSeq_division"], records3[0]["GBSeq_definition"], records3[0]["GBSeq_accession-version"], records3[0]["GBSeq_source"], records3[0]["GBSeq_references"]
+      for j in range(len(content)):
+        aux = True
+        if (not content[j] in records1[0].keys()) or (not content[j] in records2[0].keys()) or (not content[j] in records3[0].keys()):
+          aux = False
+      if aux == True:
+        data[genes[i]] = "First Result:", results[genes[i]][0], records1[0]["GBSeq_locus"], records1[0]["GBSeq_length"], records1[0]["GBSeq_strandedness"], records1[0]["GBSeq_moltype"], records1[0]["GBSeq_topology"], records1[0]["GBSeq_division"], records1[0]["GBSeq_definition"], records1[0]["GBSeq_accession-version"], records1[0]["GBSeq_source"], records1[0]["GBSeq_references"],\
+        "Second Result:", results[genes[i]][1], records2[0]["GBSeq_locus"], records2[0]["GBSeq_length"], records2[0]["GBSeq_strandedness"], records2[0]["GBSeq_moltype"], records2[0]["GBSeq_topology"], records2[0]["GBSeq_division"], records2[0]["GBSeq_definition"], records2[0]["GBSeq_accession-version"], records2[0]["GBSeq_source"], records2[0]["GBSeq_references"],\
+        "Third Result:", results[genes[i]][2], records3[0]["GBSeq_locus"], records3[0]["GBSeq_length"], records3[0]["GBSeq_strandedness"], records3[0]["GBSeq_moltype"], records3[0]["GBSeq_topology"], records3[0]["GBSeq_division"], records3[0]["GBSeq_definition"], records3[0]["GBSeq_accession-version"], records3[0]["GBSeq_source"], records3[0]["GBSeq_references"]
 
   return data
 
