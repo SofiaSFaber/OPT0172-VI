@@ -34,9 +34,6 @@ def GetCSVGenes(mardyCSV):
     genes.append(mardyCSV.GeneName[i])
   
   genes=sorted(set(genes))
-  
-  print("Genes: ",genes)
-  print("\nNúmero de Genes: ",len(genes))
 
   return genes
 
@@ -56,9 +53,6 @@ def GetNCBIData(genes):
   
   for i in range(len(remove)):
     genes.remove(remove[i])
-
-  print("Genes: ",genes)
-  print("\nNúmero de Genes: ",len(genes))
 
   data = {}
   for i in range(len(genes)):
@@ -92,8 +86,8 @@ def CreateJSON(data):
   file.write(json)
   file.close()
   files.download('integrated_databases.json.json')
-  print(json)
-
+  return json
+  
 
  def Main():
   mardyCSV = ReadMardyCSV()
