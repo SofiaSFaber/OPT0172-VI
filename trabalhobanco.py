@@ -12,7 +12,7 @@ from google.colab import files
 !pip install biopython
 import Bio
 from Bio import Entrez, SeqIO
-import json
+import json as js
 
 
 def ReadMardyCSV():
@@ -22,16 +22,16 @@ def ReadMardyCSV():
   pd.set_option('display.max_columns', 500)
   pd.set_option('display.width', 1000)
 
-  mardy = pd.read_csv('DB_by_gene.csv',header = 1)
-  mardy.rename(columns = {'Gene name':'GeneName','Found in':'FoundIn','Gene locus':'GeneLocus','AA mutation':'AAMutation',
+  mardyCSV = pd.read_csv('DB_by_gene.csv',header = 1)
+  mardyCSV.rename(columns = {'Gene name':'GeneName','Found in':'FoundIn','Gene locus':'GeneLocus','AA mutation':'AAMutation',
                         'Tandem repeat name':'TandemRepeatName','Tandem repeat sequence':'TandemRepeatSequence'}, inplace=True)
-  return mardy
+  return mardyCSV
 
 
-def GetCSVGenes(mardy):
+def GetCSVGenes(mardyCSV):
   genes = []
-  for i in range(len(mardy.GeneName)):
-    genes.append(mardy.GeneName[i])
+  for i in range(len(mardyCSV.GeneName)):
+    genes.append(mardyCSV.GeneName[i])
   
   genes=sorted(set(genes))
   
@@ -43,30 +43,30 @@ def GetCSVGenes(mardy):
 
 def GetNCBIData(genes):
   Entrez.email = "sofia17faber@gmail.com"
-  resultados={}
-  remover = []
+  results={}
+  remove = []
   
   for i in range(len(genes)):
     handle = Entrez.esearch(db="nucleotide", term=genes[i])
     record = Entrez.read(handle)
     if len(record['IdList'])>2:
-      resultados[genes[i]]=record["IdList"][0],record['IdList'][1],record['IdList'][2]
+      results[genes[i]]=record["IdList"][0],record['IdList'][1],record['IdList'][2]
     else:
-      remover.append(genes[i])
+      remove.append(genes[i])
   
-  for i in range(len(remover)):
-    genes.remove(remover[i])
+  for i in range(len(remove)):
+    genes.remove(remove[i])
 
   print("Genes: ",genes)
   print("\nNúmero de Genes: ",len(genes))
 
-  dados = {}
+  data = {}
   for i in range(len(genes)):
-      handle = Entrez.efetch(db="nucleotide", id=resultados[genes[i]][0], retmode="xml")
+      handle = Entrez.efetch(db="nucleotide", id=results[genes[i]][0], retmode="xml")
       records1 = Entrez.read(handle)
-      handle = Entrez.efetch(db="nucleotide", id=resultados[genes[i]][1], retmode="xml")
+      handle = Entrez.efetch(db="nucleotide", id=results[genes[i]][1], retmode="xml")
       records2 = Entrez.read(handle)
-      handle = Entrez.efetch(db="nucleotide", id=resultados[genes[i]][2], retmode="xml")
+      handle = Entrez.efetch(db="nucleotide", id=results[genes[i]][2], retmode="xml")
       records3 = Entrez.read(handle)
       if ("GBSeq_references" in records1[0].keys() and "GBSeq_references" in records2[0].keys() and "GBSeq_references" in records3[0].keys() and
       "GBSeq_strandedness" in records1[0].keys() and "GBSeq_strandedness" in records2[0].keys() and "GBSeq_strandedness" in records3[0].keys() and
@@ -78,26 +78,26 @@ def GetNCBIData(genes):
       "GBSeq_definition" in records1[0].keys() and "GBSeq_definition" in records2[0].keys() and "GBSeq_definition" in records3[0].keys() and
       "GBSeq_accession-version" in records1[0].keys() and "GBSeq_accession-version" in records2[0].keys() and "GBSeq_accession-version" in records3[0].keys() and
       "GBSeq_definition" in records1[0].keys() and "GBSeq_definition" in records2[0].keys() and "GBSeq_definition" in records3[0].keys()):
-        dados[genes[i]]="Primeiro Resultado:",resultados[genes[i]][0],records1[0]["GBSeq_locus"],records1[0]["GBSeq_length"],records1[0]["GBSeq_strandedness"],records1[0]["GBSeq_moltype"],records1[0]["GBSeq_topology"],records1[0]["GBSeq_division"],records1[0]["GBSeq_definition"],records1[0]["GBSeq_accession-version"],records1[0]["GBSeq_source"],records1[0]["GBSeq_references"],\
-        "Segundo Resultado:",resultados[genes[i]][1],records2[0]["GBSeq_locus"],records2[0]["GBSeq_length"],records2[0]["GBSeq_strandedness"],records2[0]["GBSeq_moltype"],records2[0]["GBSeq_topology"],records2[0]["GBSeq_division"],records2[0]["GBSeq_definition"],records2[0]["GBSeq_accession-version"],records2[0]["GBSeq_source"],records2[0]["GBSeq_references"],\
-        "Terceiro Resultado:",resultados[genes[i]][2],records3[0]["GBSeq_locus"],records3[0]["GBSeq_length"],records3[0]["GBSeq_strandedness"],records3[0]["GBSeq_moltype"],records3[0]["GBSeq_topology"],records3[0]["GBSeq_division"],records3[0]["GBSeq_definition"],records3[0]["GBSeq_accession-version"],records3[0]["GBSeq_source"],records3[0]["GBSeq_references"]
+        data[genes[i]]="Primeiro Resultado:",results[genes[i]][0],records1[0]["GBSeq_locus"],records1[0]["GBSeq_length"],records1[0]["GBSeq_strandedness"],records1[0]["GBSeq_moltype"],records1[0]["GBSeq_topology"],records1[0]["GBSeq_division"],records1[0]["GBSeq_definition"],records1[0]["GBSeq_accession-version"],records1[0]["GBSeq_source"],records1[0]["GBSeq_references"],\
+        "Segundo Resultado:",results[genes[i]][1],records2[0]["GBSeq_locus"],records2[0]["GBSeq_length"],records2[0]["GBSeq_strandedness"],records2[0]["GBSeq_moltype"],records2[0]["GBSeq_topology"],records2[0]["GBSeq_division"],records2[0]["GBSeq_definition"],records2[0]["GBSeq_accession-version"],records2[0]["GBSeq_source"],records2[0]["GBSeq_references"],\
+        "Terceiro Resultado:",results[genes[i]][2],records3[0]["GBSeq_locus"],records3[0]["GBSeq_length"],records3[0]["GBSeq_strandedness"],records3[0]["GBSeq_moltype"],records3[0]["GBSeq_topology"],records3[0]["GBSeq_division"],records3[0]["GBSeq_definition"],records3[0]["GBSeq_accession-version"],records3[0]["GBSeq_source"],records3[0]["GBSeq_references"]
 
-  return dados
+  return data
 
 
-def CreateJSON(dados):
+def CreateJSON(data):
 
-  arquivo_json = json.dumps(dados,indent=1, separators=('\r\n', ':'), sort_keys=True)
-  file = open('arquivo.json', 'w')
-  file.write(arquivo_json)
+  json = js.dumps(data,indent=1, separators=('\r\n', ':'), sort_keys=True)
+  file = open('integrated_databases.json', 'w')
+  file.write(json)
   file.close()
-  files.download('arquivo.json')
-  print(arquivo_json)
+  files.download('integrated_databases.json.json')
+  print(json)
 
 
  def Main():
-  mardy = ReadMardyCSV()
-  genes = GetCSVGenes(mardy)
-  dados = GetNCBIData(genes)
-  arquivo_json = CreateJSON(dados)
-  print(arquivo_json)
+  mardyCSV = ReadMardyCSV()
+  genes = GetCSVGenes(mardyCSV)
+  data = GetNCBIData(genes)
+  json = CreateJSON(data)
+  print(json)
