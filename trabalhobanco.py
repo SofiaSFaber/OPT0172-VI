@@ -7,7 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1AWa9q0ZR1Q6LTg1B9Qi4fCegMcxw9dEY
 """
 
-# IMPORTS BIBLIOTECAS
 import pandas as pd
 from google.colab import files
 !pip install biopython
@@ -19,22 +18,22 @@ import json
 def ReadMardyCSV():
   files.upload()
 
-  pd.set_option('display.max_rows', 500) #definição do tamanho máximo de linhas e colunas para mostrar o dataframe
+  pd.set_option('display.max_rows', 500)
   pd.set_option('display.max_columns', 500)
   pd.set_option('display.width', 1000)
 
-  mardy = pd.read_csv('DB_by_gene.csv',header = 1) #leitura do csv para o dataframe com título definido
+  mardy = pd.read_csv('DB_by_gene.csv',header = 1)
   mardy.rename(columns = {'Gene name':'GeneName','Found in':'FoundIn','Gene locus':'GeneLocus','AA mutation':'AAMutation',
-                        'Tandem repeat name':'TandemRepeatName','Tandem repeat sequence':'TandemRepeatSequence'}, inplace=True) #tirar espaços dos titulos
+                        'Tandem repeat name':'TandemRepeatName','Tandem repeat sequence':'TandemRepeatSequence'}, inplace=True)
   return mardy
 
 
 def GetCSVGenes(mardy):
-  genes = [] #Criação array dos genes do mardy
-  for i in range(len(mardy.GeneName)): #Percorre todo o dataframe em relação ao GeneName
-    genes.append(mardy.GeneName[i]) #Adiciona os genes do dataframe
+  genes = []
+  for i in range(len(mardy.GeneName)):
+    genes.append(mardy.GeneName[i])
   
-  genes=sorted(set(genes)) #Retira genes duplicados e ordena
+  genes=sorted(set(genes))
   
   print("Genes: ",genes)
   print("\nNúmero de Genes: ",len(genes))
@@ -43,31 +42,31 @@ def GetCSVGenes(mardy):
 
 
 def GetNCBIData(genes):
-  Entrez.email = "sofia17faber@gmail.com" #Autenticação para poder acessar o NCBI
-  resultados={} #Criação dicionário para resultados de cada gene
-  remover = [] #Array para remover genes com menos de 3 resultados
+  Entrez.email = "sofia17faber@gmail.com"
+  resultados={}
+  remover = []
   
   for i in range(len(genes)):
-    handle = Entrez.esearch(db="nucleotide", term=genes[i]) #Pesquisa do gene
-    record = Entrez.read(handle) #Resultados da pesquisa (20 primeiros)
-    if len(record['IdList'])>2: #Se tem pelo menos 3 resultados
-      resultados[genes[i]]=record["IdList"][0],record['IdList'][1],record['IdList'][2] #Adiciona no dicionario o gene com os 3 primeiros resultados
+    handle = Entrez.esearch(db="nucleotide", term=genes[i])
+    record = Entrez.read(handle)
+    if len(record['IdList'])>2:
+      resultados[genes[i]]=record["IdList"][0],record['IdList'][1],record['IdList'][2]
     else:
-      remover.append(genes[i]) #Adiciona os genes com menos de 3 resultados para depois remover
+      remover.append(genes[i])
   
   for i in range(len(remover)):
-    genes.remove(remover[i]) #Remove os genes com menos de 3 resultados
+    genes.remove(remover[i])
 
   print("Genes: ",genes)
   print("\nNúmero de Genes: ",len(genes))
 
-  dados = {} #Cria o dicionario com os dados finais
+  dados = {}
   for i in range(len(genes)):
-      handle = Entrez.efetch(db="nucleotide", id=resultados[genes[i]][0], retmode="xml") #Pesquisa o primeiro resultado no NCBI
+      handle = Entrez.efetch(db="nucleotide", id=resultados[genes[i]][0], retmode="xml")
       records1 = Entrez.read(handle)
-      handle = Entrez.efetch(db="nucleotide", id=resultados[genes[i]][1], retmode="xml") #Pesquisa o segundo resultado no NCBI
+      handle = Entrez.efetch(db="nucleotide", id=resultados[genes[i]][1], retmode="xml")
       records2 = Entrez.read(handle)
-      handle = Entrez.efetch(db="nucleotide", id=resultados[genes[i]][2], retmode="xml") #Pesquisa o terceiro resultado no NCBI
+      handle = Entrez.efetch(db="nucleotide", id=resultados[genes[i]][2], retmode="xml")
       records3 = Entrez.read(handle)
       if ("GBSeq_references" in records1[0].keys() and "GBSeq_references" in records2[0].keys() and "GBSeq_references" in records3[0].keys() and
       "GBSeq_strandedness" in records1[0].keys() and "GBSeq_strandedness" in records2[0].keys() and "GBSeq_strandedness" in records3[0].keys() and
