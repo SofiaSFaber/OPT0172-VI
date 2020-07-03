@@ -16,7 +16,7 @@ import json as js
 
 
 def ReadMardyCSV():
-  files.upload()
+  files.upload() #Meio para fazer o upload do CSV "DB_by_gene.csv" do Mardy no Colab
 
   pd.set_option('display.max_rows', 500)
   pd.set_option('display.max_columns', 500)
@@ -31,10 +31,10 @@ def ReadMardyCSV():
 
 def GetCSVGenes(mardyCSV):
   genes = []
-  for i in range(len(mardyCSV.GeneName)):
+  for i in range(len(mardyCSV.GeneName)): #Pega todos os genes do CSV
     genes.append(mardyCSV.GeneName[i])
   
-  genes = sorted(set(genes))
+  genes = sorted(set(genes)) #Remove genes duplicados e os ordena
 
   return genes
 
@@ -45,9 +45,9 @@ def GetNCBIData(genes):
   remove = []
   
   for i in range(len(genes)):
-    handle = Entrez.esearch(db = "nucleotide", term = genes[i])
+    handle = Entrez.esearch(db = "nucleotide", term = genes[i]) #Pesquisa os genes no banco de dados de nucleotídeos e salva os resultados
     record = Entrez.read(handle)
-    if len(record['IdList'])>2:
+    if len(record['IdList'])>2: #Pega os genes com pelo menos 3 resultados
       results[genes[i]] = record["IdList"][0], record['IdList'][1], record['IdList'][2]
     else:
       remove.append(genes[i])
@@ -60,7 +60,7 @@ def GetNCBIData(genes):
           "GBSeq_division", "GBSeq_definition", "GBSeq_accession-version"]
 
   for i in range(len(genes)):
-      handle = Entrez.efetch(db = "nucleotide", id = results[genes[i]][0], retmode = "xml")
+      handle = Entrez.efetch(db = "nucleotide", id = results[genes[i]][0], retmode = "xml") #Pega os 3 primeiros resultados do NCBI para o gene
       records1 = Entrez.read(handle)
       handle = Entrez.efetch(db = "nucleotide", id = results[genes[i]][1], retmode = "xml")
       records2 = Entrez.read(handle)
@@ -68,7 +68,7 @@ def GetNCBIData(genes):
       records3 = Entrez.read(handle)
       for j in range(len(content)):
         aux = True
-        if (not content[j] in records1[0].keys()) or (not content[j] in records2[0].keys()) or (not content[j] in records3[0].keys()):
+        if (not content[j] in records1[0].keys()) or (not content[j] in records2[0].keys()) or (not content[j] in records3[0].keys()): #Utiliza somente os genes em que os resultados possuem todas as chaves do content
           aux = False
       if aux == True:
         data[genes[i]] = "First Result:", results[genes[i]][0], records1[0]["GBSeq_locus"], records1[0]["GBSeq_length"], records1[0]["GBSeq_strandedness"], records1[0]["GBSeq_moltype"], records1[0]["GBSeq_topology"], records1[0]["GBSeq_division"], records1[0]["GBSeq_definition"], records1[0]["GBSeq_accession-version"], records1[0]["GBSeq_source"], records1[0]["GBSeq_references"],\
