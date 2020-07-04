@@ -102,7 +102,7 @@ def CreateJSON(data):
   file = open('integrated_databases.json', 'w')
   file.write(json)
   file.close()
-  files.download('integrated_databases.json.json')
+  files.download('integrated_databases.json')
   return json
   
 
