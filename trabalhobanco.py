@@ -31,7 +31,7 @@ def ReadMardyCSV():
 
 def GetCSVGenes(mardyCSV):
   genes = []
-  for i in range(len(mardyCSV.GeneName)): #Pega todos os genes do CSV
+  for i in range(len(mardyCSV.GeneName)):
     genes.append(mardyCSV.GeneName[i])
   
   genes = sorted(set(genes)) #Remove genes duplicados e os ordena
@@ -41,20 +41,39 @@ def GetCSVGenes(mardyCSV):
 
 def GetNCBIData(genes):
   Entrez.email = "sofia17faber@gmail.com"
+  
+  results, remove = searchGenes(genes)
+  
+  genes = removeGenes(genes, remove)
+
+  data = getSearchResults(genes, results)
+
+  return data
+
+
+def searchGenes(genes):
   results = {}
   remove = []
   
   for i in range(len(genes)):
-    handle = Entrez.esearch(db = "nucleotide", term = genes[i]) #Pesquisa os genes no banco de dados de nucleotídeos e salva os resultados
+    handle = Entrez.esearch(db = "nucleotide", term = genes[i])
     record = Entrez.read(handle)
-    if len(record['IdList'])>2: #Pega os genes com pelo menos 3 resultados
+    if len(record['IdList'])>2: #Utiliza os genes com pelo menos 3 resultados
       results[genes[i]] = record["IdList"][0], record['IdList'][1], record['IdList'][2]
     else:
       remove.append(genes[i])
-  
+
+  return results, remove
+
+
+def removeGenes(genes, remove):
   for i in range(len(remove)):
     genes.remove(remove[i])
 
+  return genes
+
+
+def getSearchResults(genes, results):
   data = {}
   content = ["GBSeq_references", "GBSeq_strandedness", "GBSeq_locus", "GBSeq_length", "GBSeq_moltype", "GBSeq_topology",
           "GBSeq_division", "GBSeq_definition", "GBSeq_accession-version"]
