@@ -106,7 +106,7 @@ def CreateJSON(data):
   return json
   
 
- def Main():
+def Main():
   mardyCSV = ReadMardyCSV()
   genes = GetCSVGenes(mardyCSV)
   data = GetNCBIData(genes)
