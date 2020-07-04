@@ -75,8 +75,8 @@ def removeGenes(genes, remove):
 
 def getSearchResults(genes, results):
   data = {}
-  content = ["GBSeq_references", "GBSeq_strandedness", "GBSeq_locus", "GBSeq_length", "GBSeq_moltype", "GBSeq_topology",
-          "GBSeq_division", "GBSeq_definition", "GBSeq_accession-version"]
+  content = ["GBSeq_strandedness", "GBSeq_locus", "GBSeq_length", "GBSeq_moltype", "GBSeq_topology",
+          "GBSeq_division", "GBSeq_definition", "GBSeq_accession-version", "GBSeq_source"]
 
   for i in range(len(genes)):
       handle = Entrez.efetch(db = "nucleotide", id = results[genes[i]][0], retmode = "xml") #Pega os 3 primeiros resultados do NCBI para o gene
@@ -90,9 +90,9 @@ def getSearchResults(genes, results):
         if (not content[j] in records1[0].keys()) or (not content[j] in records2[0].keys()) or (not content[j] in records3[0].keys()): #Utiliza somente os genes em que os resultados possuem todas as chaves do content
           aux = False
       if aux == True:
-        data[genes[i]] = "First Result:", results[genes[i]][0], records1[0]["GBSeq_locus"], records1[0]["GBSeq_length"], records1[0]["GBSeq_strandedness"], records1[0]["GBSeq_moltype"], records1[0]["GBSeq_topology"], records1[0]["GBSeq_division"], records1[0]["GBSeq_definition"], records1[0]["GBSeq_accession-version"], records1[0]["GBSeq_source"], records1[0]["GBSeq_references"],\
-        "Second Result:", results[genes[i]][1], records2[0]["GBSeq_locus"], records2[0]["GBSeq_length"], records2[0]["GBSeq_strandedness"], records2[0]["GBSeq_moltype"], records2[0]["GBSeq_topology"], records2[0]["GBSeq_division"], records2[0]["GBSeq_definition"], records2[0]["GBSeq_accession-version"], records2[0]["GBSeq_source"], records2[0]["GBSeq_references"],\
-        "Third Result:", results[genes[i]][2], records3[0]["GBSeq_locus"], records3[0]["GBSeq_length"], records3[0]["GBSeq_strandedness"], records3[0]["GBSeq_moltype"], records3[0]["GBSeq_topology"], records3[0]["GBSeq_division"], records3[0]["GBSeq_definition"], records3[0]["GBSeq_accession-version"], records3[0]["GBSeq_source"], records3[0]["GBSeq_references"]
+        data[genes[i]] = "First Result:", results[genes[i]][0], records1[0]["GBSeq_locus"], records1[0]["GBSeq_length"], records1[0]["GBSeq_strandedness"], records1[0]["GBSeq_moltype"], records1[0]["GBSeq_topology"], records1[0]["GBSeq_division"], records1[0]["GBSeq_definition"], records1[0]["GBSeq_accession-version"], records1[0]["GBSeq_source"],\
+        "Second Result:", results[genes[i]][1], records2[0]["GBSeq_locus"], records2[0]["GBSeq_length"], records2[0]["GBSeq_strandedness"], records2[0]["GBSeq_moltype"], records2[0]["GBSeq_topology"], records2[0]["GBSeq_division"], records2[0]["GBSeq_definition"], records2[0]["GBSeq_accession-version"], records2[0]["GBSeq_source"],\
+        "Third Result:", results[genes[i]][2], records3[0]["GBSeq_locus"], records3[0]["GBSeq_length"], records3[0]["GBSeq_strandedness"], records3[0]["GBSeq_moltype"], records3[0]["GBSeq_topology"], records3[0]["GBSeq_division"], records3[0]["GBSeq_definition"], records3[0]["GBSeq_accession-version"], records3[0]["GBSeq_source"]
 
   return data
 
