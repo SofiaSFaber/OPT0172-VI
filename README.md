@@ -1,4 +1,4 @@
 # Informática Biomédica - UFCSPA
 ## Técnicas Avançadas de Projeto de Software (OPT0172)
-### Semana XIV: Trabalho Final
-Código Utilizado: Serviço em Go que calcula o troco a partir das maiores notas
+### Semana VI: Uso de conceitos de "código limpo", Git e Github
+Código Utilizado: Integração de Banco de Dados - Trabalho Final da disciplina Banco de Dados para a Área Biomédica (BAD002)
